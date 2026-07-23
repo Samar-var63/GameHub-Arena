@@ -12,7 +12,7 @@ export default function LoginPage() {
         </p>
         <a 
           href="/dashboard"
-          className="inline-block w-full bg-indigo-600 hover:bg-indigo-700 text-white py-2 rounded-lg font-semibold transition-colors text-center"
+          className="inline-block w-full bg-indigo-600 hover:bg-indigo-700 text-white py-2 rounded-lg font-semibold transition-colors text-center cursor-pointer"
         >
           Sign In
         </a>
