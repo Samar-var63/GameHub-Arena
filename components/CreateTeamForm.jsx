@@ -17,7 +17,8 @@ export default function CreateTeamForm() {
     setError("");
 
     try {
-      const res = await fetch("/api/teams/create", {
+      // Fixed URL: Changed from /api/teams/create to /api/teams
+      const res = await fetch("/api/teams", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
