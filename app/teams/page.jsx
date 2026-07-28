@@ -1,7 +1,7 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
-import GlassCard from "@/components/GlassCard";
+import { useEffect, useState } from "react";
+import GlassCard from "@/components/GlassCard"; // ya "../../components/GlassCard"
 
 export default function TeamsPage() {
   const [teams, setTeams] = useState([]);
@@ -12,37 +12,40 @@ export default function TeamsPage() {
       try {
         const res = await fetch("/api/teams");
         const data = await res.json();
-        if (data.teams) {
+        if (data.success) {
           setTeams(data.teams);
-        } else if (Array.isArray(data)) {
-          setTeams(data);
         }
-      } catch (err) {
-        console.error("Failed to fetch teams", err);
+      } catch (error) {
+        console.error("Failed to fetch teams:", error);
       } finally {
         setLoading(false);
       }
     }
+
     fetchTeams();
   }, []);
 
   return (
-    <div className="p-8 max-w-7xl mx-auto">
-      <h1 className="text-3xl font-bold text-white mb-6">Registered Teams</h1>
+    <div className="min-h-screen p-8 bg-slate-950 text-white">
+      <h1 className="text-3xl font-bold mb-2">Teams</h1>
+      <p className="text-gray-400 mb-6">Registered Teams in GameHub Arena</p>
 
       {loading ? (
-        <p className="text-slate-400">Loading teams from database...</p>
+        <p className="text-gray-400">Loading teams...</p>
       ) : teams.length === 0 ? (
-        <p className="text-slate-400">No teams found yet. Create one from the Dashboard!</p>
+        <p className="text-gray-400">No teams registered yet.</p>
       ) : (
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-          {teams.map((team, index) => (
-            <GlassCard key={team._id || index} className="p-6">
-              <h3 className="text-xl font-bold text-indigo-400">{team.name}</h3>
-              <p className="text-xs text-slate-500 mt-2">
-                ID: {team._id ? team._id.substring(0, 10) + "..." : "Local"}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          {teams.map((team) => (
+            <div
+              key={team._id}
+              className="p-5 border border-slate-800 rounded-xl bg-slate-900/50 backdrop-blur"
+            >
+              <h2 className="text-xl font-bold text-indigo-400">{team.name}</h2>
+              <p className="text-sm text-gray-400 mt-1">
+                Captain ID: {team.captain || "N/A"}
               </p>
-            </GlassCard>
+            </div>
           ))}
         </div>
       )}
