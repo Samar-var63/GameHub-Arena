@@ -5,9 +5,19 @@ import { useState } from "react";
 export default function TournamentsPage() {
   const [selectedTournament, setSelectedTournament] = useState(null);
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
-  const [registeredIds, setRegisteredIds] = useState([]); // Tracks registered tournament IDs
+  const [registeredIds, setRegisteredIds] = useState([]);
 
-  // Initial Tournaments List
+  // Security Admin Auth States
+  const [isAdminAuthOpen, setIsAdminAuthOpen] = useState(false);
+  const [adminPasswordInput, setAdminPasswordInput] = useState("");
+  const [authErrorMessage, setAuthErrorMessage] = useState("");
+  const [pendingAction, setPendingAction] = useState(null); // 'ADD' or 'DELETE'
+  const [targetDeleteId, setTargetDeleteId] = useState(null);
+
+  // Admin Security Password (Deepika, Parth, Vaibhav, Samar)
+  const ADMIN_PASSWORD = "dpvs";
+
+  // Tournaments List
   const [tournaments, setTournaments] = useState([
     {
       id: "1",
@@ -41,7 +51,6 @@ export default function TournamentsPage() {
     },
   ]);
 
-  // New Tournament Form State
   const [newTournament, setNewTournament] = useState({
     title: "",
     game: "",
@@ -51,7 +60,46 @@ export default function TournamentsPage() {
     schedule: "Upcoming",
   });
 
-  // Handle Registration / Cancellation
+  // Open Auth Modal for Add Tournament
+  const triggerAddAuth = () => {
+    setPendingAction("ADD");
+    setAdminPasswordInput("");
+    setAuthErrorMessage("");
+    setIsAdminAuthOpen(true);
+  };
+
+  // Open Auth Modal for Delete Tournament
+  const triggerDeleteAuth = (id) => {
+    setTargetDeleteId(id);
+    setPendingAction("DELETE");
+    setAdminPasswordInput("");
+    setAuthErrorMessage("");
+    setIsAdminAuthOpen(true);
+  };
+
+  // Verify Admin Password
+  const handleVerifyPassword = (e) => {
+    e.preventDefault();
+    if (adminPasswordInput === ADMIN_PASSWORD) {
+      setIsAdminAuthOpen(false);
+      setAuthErrorMessage("");
+
+      if (pendingAction === "ADD") {
+        setIsAddModalOpen(true);
+      } else if (pendingAction === "DELETE" && targetDeleteId) {
+        setTournaments((prev) => prev.filter((t) => t.id !== targetDeleteId));
+        if (selectedTournament?.id === targetDeleteId) {
+          setSelectedTournament(null);
+        }
+        setTargetDeleteId(null);
+      }
+      setPendingAction(null);
+    } else {
+      setAuthErrorMessage("Invalid Admin Password! Access Denied.");
+    }
+  };
+
+  // Registration Toggle
   const handleToggleRegister = (id) => {
     const isRegistered = registeredIds.includes(id);
 
@@ -73,7 +121,6 @@ export default function TournamentsPage() {
       setRegisteredIds([...registeredIds, id]);
     }
 
-    // Update state inside modal as well
     if (selectedTournament && selectedTournament.id === id) {
       setSelectedTournament((prev) => ({
         ...prev,
@@ -82,17 +129,7 @@ export default function TournamentsPage() {
     }
   };
 
-  // Handle Delete Tournament
-  const handleDeleteTournament = (id) => {
-    if (confirm("Are you sure you want to delete this tournament?")) {
-      setTournaments(tournaments.filter((t) => t.id !== id));
-      if (selectedTournament?.id === id) {
-        setSelectedTournament(null);
-      }
-    }
-  };
-
-  // Handle Adding New Tournament
+  // Create Tournament Handler
   const handleAddTournament = (e) => {
     e.preventDefault();
     if (!newTournament.title || !newTournament.game || !newTournament.prizePool) return;
@@ -130,27 +167,27 @@ export default function TournamentsPage() {
         </div>
 
         <button
-          onClick={() => setIsAddModalOpen(true)}
+          onClick={triggerAddAuth}
           className="px-5 py-2.5 bg-indigo-600 hover:bg-indigo-500 text-white font-bold rounded-xl shadow-lg transition duration-200 cursor-pointer flex items-center gap-2"
         >
-          <span>+</span> Add Tournament
+          🔒 <span>+ Add Tournament</span>
         </button>
       </div>
 
-      {/* Tournament Cards Grid */}
+      {/* Grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         {tournaments.map((t) => {
           const isUserRegistered = registeredIds.includes(t.id);
           return (
             <div
               key={t.id}
-              className="p-6 bg-slate-900/60 border border-slate-800 rounded-2xl backdrop-blur flex flex-col justify-between shadow-xl relative group hover:border-slate-700 transition"
+              className="p-6 bg-slate-900/60 border border-slate-800 rounded-2xl backdrop-blur flex flex-col justify-between shadow-xl relative hover:border-slate-700 transition"
             >
-              {/* Delete Button on Card */}
+              {/* Delete Button */}
               <button
-                onClick={() => handleDeleteTournament(t.id)}
-                title="Delete Tournament"
-                className="absolute top-4 right-4 text-slate-500 hover:text-red-400 p-1 rounded transition opacity-80 hover:opacity-100"
+                onClick={() => triggerDeleteAuth(t.id)}
+                title="Admin Delete Tournament"
+                className="absolute top-4 right-4 text-slate-500 hover:text-red-400 p-1 rounded transition"
               >
                 🗑️
               </button>
@@ -160,13 +197,18 @@ export default function TournamentsPage() {
                   {t.game}
                 </span>
                 <h2 className="text-2xl font-bold mt-3 text-slate-100 pr-6">{t.title}</h2>
-                
+
                 <div className="mt-4 flex justify-between text-sm text-slate-400 border-t border-slate-800/80 pt-3">
                   <span>
                     Prize Pool: <strong className="text-green-400">{t.prizePool}</strong>
                   </span>
                   <span>
-                    Slots: <strong className={t.registered >= t.maxSlots ? "text-red-400" : "text-indigo-300"}>
+                    Slots:{" "}
+                    <strong
+                      className={
+                        t.registered >= t.maxSlots ? "text-red-400" : "text-indigo-300"
+                      }
+                    >
                       {t.registered}/{t.maxSlots}
                     </strong>
                   </span>
@@ -253,9 +295,9 @@ export default function TournamentsPage() {
               )}
 
               <button
-                onClick={() => handleDeleteTournament(selectedTournament.id)}
+                onClick={() => triggerDeleteAuth(selectedTournament.id)}
                 className="py-2.5 px-4 bg-red-950/40 hover:bg-red-900/60 border border-red-800/50 text-red-300 font-medium rounded-xl transition cursor-pointer"
-                title="Delete Tournament"
+                title="Admin Delete"
               >
                 Delete 🗑️
               </button>
@@ -264,7 +306,62 @@ export default function TournamentsPage() {
         </div>
       )}
 
-      {/* 2. Add Tournament Modal Form */}
+      {/* 2. Admin Password Protection Modal */}
+      {isAdminAuthOpen && (
+        <div className="fixed inset-0 bg-black/85 backdrop-blur-sm flex items-center justify-center p-4 z-50">
+          <div className="bg-slate-900 border border-slate-800 p-6 rounded-2xl max-w-sm w-full text-white shadow-2xl relative text-center">
+            <button
+              onClick={() => setIsAdminAuthOpen(false)}
+              className="absolute top-4 right-4 text-gray-400 hover:text-white text-xl font-bold"
+            >
+              ✕
+            </button>
+
+            <div className="w-12 h-12 bg-indigo-500/20 text-indigo-400 rounded-full flex items-center justify-center mx-auto text-2xl mb-3">
+              🔒
+            </div>
+
+            <h2 className="text-xl font-bold text-slate-100">Admin Authentication Required</h2>
+            <p className="text-xs text-slate-400 mt-1">
+              Enter admin password to {pendingAction === "ADD" ? "add a new tournament" : "delete this tournament"}.
+            </p>
+
+            <form onSubmit={handleVerifyPassword} className="mt-5 space-y-3">
+              <input
+                type="password"
+                placeholder="Enter Admin Password"
+                autoFocus
+                required
+                value={adminPasswordInput}
+                onChange={(e) => setAdminPasswordInput(e.target.value)}
+                className="w-full bg-slate-950 border border-slate-800 rounded-xl p-3 text-center text-sm focus:outline-none focus:border-indigo-500 text-white tracking-widest"
+              />
+
+              {authErrorMessage && (
+                <p className="text-xs text-red-400 font-medium">{authErrorMessage}</p>
+              )}
+
+              <div className="flex gap-2 pt-2">
+                <button
+                  type="submit"
+                  className="flex-1 py-2.5 bg-indigo-600 hover:bg-indigo-500 font-bold rounded-xl text-white transition cursor-pointer text-sm"
+                >
+                  Verify Admin
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setIsAdminAuthOpen(false)}
+                  className="py-2.5 px-4 bg-slate-800 hover:bg-slate-700 font-medium rounded-xl text-slate-300 transition cursor-pointer text-sm"
+                >
+                  Cancel
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+
+      {/* 3. Add Tournament Form Modal */}
       {isAddModalOpen && (
         <div className="fixed inset-0 bg-black/80 backdrop-blur-sm flex items-center justify-center p-4 z-50">
           <div className="bg-slate-900 border border-slate-800 p-6 rounded-2xl max-w-md w-full text-white shadow-2xl relative">
