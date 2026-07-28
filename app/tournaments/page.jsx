@@ -5,26 +5,37 @@ import { useState } from "react";
 export default function TournamentsPage() {
   const [selectedTournament, setSelectedTournament] = useState(null);
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
+  const [registeredIds, setRegisteredIds] = useState([]); // Tracks registered tournament IDs
 
   // Initial Tournaments List
   const [tournaments, setTournaments] = useState([
     {
       id: "1",
+      title: "Mova Legends Tournament",
+      game: "Mova legend",
+      prizePool: "₹20,000",
+      registered: 5,
+      maxSlots: 16,
+      rules: "5v5 team match. Double elimination structure.",
+      schedule: "29th July, 2026 at 5:00 PM IST",
+    },
+    {
+      id: "2",
       title: "BGMI Championship 2026",
       game: "Battlegrounds Mobile India",
       prizePool: "₹50,000",
-      status: "Registration Open",
-      teamsCount: "12/16",
+      registered: 12,
+      maxSlots: 16,
       rules: "Squad matches, Erangel & Miramar maps. TPP mode only. No emulators allowed.",
       schedule: "Starts Tomorrow at 6:00 PM IST",
     },
     {
-      id: "2",
+      id: "3",
       title: "Valorant Valor Clash",
       game: "Valorant",
       prizePool: "₹1,00,000",
-      status: "Upcoming",
-      teamsCount: "8/32",
+      registered: 8,
+      maxSlots: 32,
       rules: "5v5 Competitive ruleset. Single elimination bracket. All matches Bo3.",
       schedule: "30th July, 2026 at 4:00 PM IST",
     },
@@ -35,10 +46,51 @@ export default function TournamentsPage() {
     title: "",
     game: "",
     prizePool: "",
-    teamsCount: "0/16",
+    maxSlots: 16,
     rules: "Standard tournament rules apply.",
     schedule: "Upcoming",
   });
+
+  // Handle Registration / Cancellation
+  const handleToggleRegister = (id) => {
+    const isRegistered = registeredIds.includes(id);
+
+    setTournaments((prev) =>
+      prev.map((t) => {
+        if (t.id === id) {
+          return {
+            ...t,
+            registered: isRegistered ? t.registered - 1 : t.registered + 1,
+          };
+        }
+        return t;
+      })
+    );
+
+    if (isRegistered) {
+      setRegisteredIds(registeredIds.filter((regId) => regId !== id));
+    } else {
+      setRegisteredIds([...registeredIds, id]);
+    }
+
+    // Update state inside modal as well
+    if (selectedTournament && selectedTournament.id === id) {
+      setSelectedTournament((prev) => ({
+        ...prev,
+        registered: isRegistered ? prev.registered - 1 : prev.registered + 1,
+      }));
+    }
+  };
+
+  // Handle Delete Tournament
+  const handleDeleteTournament = (id) => {
+    if (confirm("Are you sure you want to delete this tournament?")) {
+      setTournaments(tournaments.filter((t) => t.id !== id));
+      if (selectedTournament?.id === id) {
+        setSelectedTournament(null);
+      }
+    }
+  };
 
   // Handle Adding New Tournament
   const handleAddTournament = (e) => {
@@ -48,6 +100,8 @@ export default function TournamentsPage() {
     const createdTournament = {
       ...newTournament,
       id: Date.now().toString(),
+      registered: 0,
+      maxSlots: Number(newTournament.maxSlots) || 16,
     };
 
     setTournaments([createdTournament, ...tournaments]);
@@ -56,7 +110,7 @@ export default function TournamentsPage() {
       title: "",
       game: "",
       prizePool: "",
-      teamsCount: "0/16",
+      maxSlots: 16,
       rules: "Standard tournament rules apply.",
       schedule: "Upcoming",
     });
@@ -75,10 +129,9 @@ export default function TournamentsPage() {
           </p>
         </div>
 
-        {/* Add Tournament Button for Judge Demo */}
         <button
           onClick={() => setIsAddModalOpen(true)}
-          className="px-5 py-2.5 bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-500 hover:to-purple-500 text-white font-bold rounded-xl shadow-lg transition duration-200 cursor-pointer flex items-center gap-2"
+          className="px-5 py-2.5 bg-indigo-600 hover:bg-indigo-500 text-white font-bold rounded-xl shadow-lg transition duration-200 cursor-pointer flex items-center gap-2"
         >
           <span>+</span> Add Tournament
         </button>
@@ -86,32 +139,56 @@ export default function TournamentsPage() {
 
       {/* Tournament Cards Grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {tournaments.map((t) => (
-          <div
-            key={t.id}
-            className="p-6 bg-slate-900/60 border border-slate-800 rounded-2xl backdrop-blur flex flex-col justify-between shadow-xl hover:border-slate-700 transition"
-          >
-            <div>
-              <span className="text-xs font-semibold px-2.5 py-1 rounded bg-indigo-500/20 text-indigo-300">
-                {t.game}
-              </span>
-              <h2 className="text-2xl font-bold mt-3 text-slate-100">{t.title}</h2>
-              <div className="mt-4 flex justify-between text-sm text-slate-400 border-t border-slate-800/80 pt-3">
-                <span>
-                  Prize Pool: <strong className="text-green-400">{t.prizePool}</strong>
+        {tournaments.map((t) => {
+          const isUserRegistered = registeredIds.includes(t.id);
+          return (
+            <div
+              key={t.id}
+              className="p-6 bg-slate-900/60 border border-slate-800 rounded-2xl backdrop-blur flex flex-col justify-between shadow-xl relative group hover:border-slate-700 transition"
+            >
+              {/* Delete Button on Card */}
+              <button
+                onClick={() => handleDeleteTournament(t.id)}
+                title="Delete Tournament"
+                className="absolute top-4 right-4 text-slate-500 hover:text-red-400 p-1 rounded transition opacity-80 hover:opacity-100"
+              >
+                🗑️
+              </button>
+
+              <div>
+                <span className="text-xs font-semibold px-2.5 py-1 rounded bg-indigo-500/20 text-indigo-300">
+                  {t.game}
                 </span>
-                <span>Slots: {t.teamsCount}</span>
+                <h2 className="text-2xl font-bold mt-3 text-slate-100 pr-6">{t.title}</h2>
+                
+                <div className="mt-4 flex justify-between text-sm text-slate-400 border-t border-slate-800/80 pt-3">
+                  <span>
+                    Prize Pool: <strong className="text-green-400">{t.prizePool}</strong>
+                  </span>
+                  <span>
+                    Slots: <strong className={t.registered >= t.maxSlots ? "text-red-400" : "text-indigo-300"}>
+                      {t.registered}/{t.maxSlots}
+                    </strong>
+                  </span>
+                </div>
+              </div>
+
+              <div className="mt-5 flex gap-2">
+                <button
+                  onClick={() => setSelectedTournament(t)}
+                  className="flex-1 py-2.5 bg-indigo-600 hover:bg-indigo-500 text-white font-semibold rounded-xl transition cursor-pointer"
+                >
+                  View Details
+                </button>
+                {isUserRegistered && (
+                  <span className="px-3 py-2 bg-green-500/10 text-green-400 border border-green-500/30 rounded-xl text-xs font-semibold flex items-center">
+                    Registered ✓
+                  </span>
+                )}
               </div>
             </div>
-
-            <button
-              onClick={() => setSelectedTournament(t)}
-              className="w-full mt-5 py-2.5 bg-indigo-600 hover:bg-indigo-500 text-white font-semibold rounded-xl transition cursor-pointer"
-            >
-              View Details
-            </button>
-          </div>
-        ))}
+          );
+        })}
       </div>
 
       {/* 1. View Details Modal */}
@@ -128,7 +205,7 @@ export default function TournamentsPage() {
             <span className="text-xs font-semibold px-2.5 py-1 rounded bg-indigo-500/20 text-indigo-300">
               {selectedTournament.game}
             </span>
-            <h2 className="text-2xl font-extrabold mt-2 text-indigo-400">
+            <h2 className="text-2xl font-extrabold mt-2 text-indigo-400 pr-6">
               {selectedTournament.title}
             </h2>
 
@@ -136,6 +213,12 @@ export default function TournamentsPage() {
               <p>
                 <strong>Prize Pool:</strong>{" "}
                 <span className="text-green-400 font-bold">{selectedTournament.prizePool}</span>
+              </p>
+              <p>
+                <strong>Slots Filled:</strong>{" "}
+                <span className="text-indigo-400 font-bold">
+                  {selectedTournament.registered} / {selectedTournament.maxSlots}
+                </span>
               </p>
               <p>
                 <strong>Schedule:</strong> {selectedTournament.schedule}
@@ -146,20 +229,35 @@ export default function TournamentsPage() {
             </div>
 
             <div className="mt-6 flex gap-3">
+              {registeredIds.includes(selectedTournament.id) ? (
+                <button
+                  onClick={() => handleToggleRegister(selectedTournament.id)}
+                  className="flex-1 py-2.5 bg-red-600/80 hover:bg-red-600 font-bold rounded-xl text-white transition cursor-pointer"
+                >
+                  Cancel Registration
+                </button>
+              ) : (
+                <button
+                  onClick={() => handleToggleRegister(selectedTournament.id)}
+                  disabled={selectedTournament.registered >= selectedTournament.maxSlots}
+                  className={`flex-1 py-2.5 font-bold rounded-xl text-white transition cursor-pointer ${
+                    selectedTournament.registered >= selectedTournament.maxSlots
+                      ? "bg-gray-700 cursor-not-allowed"
+                      : "bg-green-600 hover:bg-green-500"
+                  }`}
+                >
+                  {selectedTournament.registered >= selectedTournament.maxSlots
+                    ? "Tournament Full"
+                    : "Register Now"}
+                </button>
+              )}
+
               <button
-                onClick={() => {
-                  alert(`Registered for ${selectedTournament.title}!`);
-                  setSelectedTournament(null);
-                }}
-                className="flex-1 py-2.5 bg-green-600 hover:bg-green-500 font-bold rounded-xl text-white transition cursor-pointer"
+                onClick={() => handleDeleteTournament(selectedTournament.id)}
+                className="py-2.5 px-4 bg-red-950/40 hover:bg-red-900/60 border border-red-800/50 text-red-300 font-medium rounded-xl transition cursor-pointer"
+                title="Delete Tournament"
               >
-                Register Now
-              </button>
-              <button
-                onClick={() => setSelectedTournament(null)}
-                className="py-2.5 px-4 bg-slate-800 hover:bg-slate-700 font-medium rounded-xl text-slate-300 transition cursor-pointer"
-              >
-                Close
+                Delete 🗑️
               </button>
             </div>
           </div>
@@ -196,7 +294,7 @@ export default function TournamentsPage() {
                 <label className="text-xs text-slate-400 block mb-1">Game Name</label>
                 <input
                   type="text"
-                  placeholder="e.g. Counter-Strike 2 / Free Fire"
+                  placeholder="e.g. Counter-Strike 2"
                   required
                   value={newTournament.game}
                   onChange={(e) => setNewTournament({ ...newTournament, game: e.target.value })}
@@ -217,12 +315,12 @@ export default function TournamentsPage() {
                   />
                 </div>
                 <div>
-                  <label className="text-xs text-slate-400 block mb-1">Slots (Count)</label>
+                  <label className="text-xs text-slate-400 block mb-1">Max Slots</label>
                   <input
-                    type="text"
-                    placeholder="e.g. 0/16"
-                    value={newTournament.teamsCount}
-                    onChange={(e) => setNewTournament({ ...newTournament, teamsCount: e.target.value })}
+                    type="number"
+                    placeholder="16"
+                    value={newTournament.maxSlots}
+                    onChange={(e) => setNewTournament({ ...newTournament, maxSlots: e.target.value })}
                     className="w-full bg-slate-950 border border-slate-800 rounded-xl p-2.5 text-sm focus:outline-none focus:border-indigo-500"
                   />
                 </div>
