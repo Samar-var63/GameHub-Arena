@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import Link from "next/link";
 
 export default function DashboardPage() {
   const [teamName, setTeamName] = useState("");
@@ -9,7 +10,10 @@ export default function DashboardPage() {
   const [registeredTeams, setRegisteredTeams] = useState([]);
   const [successMsg, setSuccessMsg] = useState("");
 
-  // Featured Live Arenas
+  // Selected Arena Modal State
+  const [selectedArena, setSelectedArena] = useState(null);
+
+  // Featured Live Arenas Data
   const liveArenas = [
     {
       id: "1",
@@ -18,6 +22,11 @@ export default function DashboardPage() {
       status: "LIVE NOW",
       prizePool: "₹50,000",
       teamsCount: "16/20 Teams",
+      roomId: "BGMI-8849-ROOM",
+      pass: "77812",
+      map: "Erangel (Custom Match)",
+      time: "11:00 AM IST",
+      streamUrl: "https://youtube.com",
       badgeColor: "bg-red-500/20 text-red-400 border-red-500/30",
     },
     {
@@ -27,6 +36,11 @@ export default function DashboardPage() {
       status: "Starts in 2 Hours",
       prizePool: "₹30,000",
       teamsCount: "12/16 Teams",
+      roomId: "VALO-ASIA-HUB",
+      pass: "VALO2026",
+      map: "Ascent (Best of 3)",
+      time: "01:00 PM IST",
+      streamUrl: "https://twitch.tv",
       badgeColor: "bg-yellow-500/20 text-yellow-400 border-yellow-500/30",
     },
     {
@@ -36,6 +50,11 @@ export default function DashboardPage() {
       status: "Upcoming",
       prizePool: "₹25,000",
       teamsCount: "8/16 Teams",
+      roomId: "CS2-SERVER-09",
+      pass: "CSPRO99",
+      map: "Mirage",
+      time: "04:00 PM IST",
+      streamUrl: "https://youtube.com",
       badgeColor: "bg-indigo-500/20 text-indigo-400 border-indigo-500/30",
     },
   ];
@@ -91,10 +110,10 @@ export default function DashboardPage() {
         </div>
       </div>
 
-      {/* Main Grid: Live Arenas (Left) vs Guild Control (Right) */}
+      {/* Main Grid */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
         
-        {/* Left Column: Live Arenas & Tournaments */}
+        {/* Left Column: Live Arenas */}
         <div className="lg:col-span-2 space-y-6">
           <div className="flex justify-between items-center">
             <h2 className="text-2xl font-extrabold text-slate-100 flex items-center gap-2">
@@ -124,8 +143,12 @@ export default function DashboardPage() {
                   </p>
                 </div>
 
-                <button className="px-4 py-2 bg-indigo-600 hover:bg-indigo-500 text-white font-semibold rounded-xl text-xs transition cursor-pointer self-stretch sm:self-auto text-center">
-                  Enter Match Hub
+                {/* Clickable Enter Match Hub Button */}
+                <button
+                  onClick={() => setSelectedArena(arena)}
+                  className="px-5 py-2.5 bg-indigo-600 hover:bg-indigo-500 text-white font-bold rounded-xl text-xs transition cursor-pointer shadow-md self-stretch sm:self-auto text-center active:scale-95"
+                >
+                  Enter Match Hub 🎮
                 </button>
               </div>
             ))}
@@ -141,7 +164,7 @@ export default function DashboardPage() {
           </div>
         </div>
 
-        {/* Right Column: Guild Control / Team Registration */}
+        {/* Right Column: Guild Control */}
         <div className="space-y-6">
           <h2 className="text-2xl font-extrabold text-slate-100">Guild Control</h2>
 
@@ -203,7 +226,6 @@ export default function DashboardPage() {
               </button>
             </form>
 
-            {/* Quick View of Created Teams */}
             {registeredTeams.length > 0 && (
               <div className="mt-6 pt-5 border-t border-slate-800 space-y-2">
                 <span className="text-xs font-bold text-slate-400 uppercase tracking-wider block">
@@ -221,6 +243,74 @@ export default function DashboardPage() {
         </div>
 
       </div>
+
+      {/* Match Hub Details Modal */}
+      {selectedArena && (
+        <div className="fixed inset-0 bg-black/85 backdrop-blur-sm flex items-center justify-center p-4 z-50">
+          <div className="bg-slate-900 border border-slate-800 p-6 rounded-2xl max-w-md w-full text-white shadow-2xl relative">
+            <button
+              onClick={() => setSelectedArena(null)}
+              className="absolute top-4 right-4 text-gray-400 hover:text-white text-xl font-bold cursor-pointer"
+            >
+              ✕
+            </button>
+
+            <div className="flex items-center gap-2 mb-2">
+              <span className={`text-[10px] font-bold px-2 py-0.5 rounded border ${selectedArena.badgeColor}`}>
+                {selectedArena.status}
+              </span>
+              <span className="text-xs bg-slate-800 text-slate-300 px-2 py-0.5 rounded font-medium">
+                {selectedArena.game}
+              </span>
+            </div>
+
+            <h2 className="text-2xl font-extrabold text-slate-100">{selectedArena.title}</h2>
+            <p className="text-xs text-slate-400 mt-1 mb-5">
+              Official Tournament Custom Room & Match Details
+            </p>
+
+            <div className="bg-slate-950 p-4 rounded-xl border border-slate-800 space-y-3 text-xs mb-5">
+              <div className="flex justify-between items-center pb-2 border-b border-slate-800/80">
+                <span className="text-slate-400">Map / Format:</span>
+                <span className="font-bold text-slate-200">{selectedArena.map}</span>
+              </div>
+              <div className="flex justify-between items-center pb-2 border-b border-slate-800/80">
+                <span className="text-slate-400">Schedule Time:</span>
+                <span className="font-bold text-indigo-400">{selectedArena.time}</span>
+              </div>
+              <div className="flex justify-between items-center pb-2 border-b border-slate-800/80">
+                <span className="text-slate-400">Custom Room ID:</span>
+                <span className="font-mono bg-slate-900 px-2 py-1 rounded text-yellow-400 font-bold tracking-wider">
+                  {selectedArena.roomId}
+                </span>
+              </div>
+              <div className="flex justify-between items-center">
+                <span className="text-slate-400">Room Password:</span>
+                <span className="font-mono bg-slate-900 px-2 py-1 rounded text-emerald-400 font-bold tracking-wider">
+                  {selectedArena.pass}
+                </span>
+              </div>
+            </div>
+
+            <div className="flex gap-3">
+              <a
+                href={selectedArena.streamUrl}
+                target="_blank"
+                rel="noreferrer"
+                className="flex-1 py-2.5 bg-red-600 hover:bg-red-500 font-bold rounded-xl text-white text-center transition cursor-pointer text-xs flex items-center justify-center gap-2"
+              >
+                🔴 Watch Live Stream
+              </a>
+              <Link
+                href="/tournaments"
+                className="py-2.5 px-4 bg-slate-800 hover:bg-slate-700 font-medium rounded-xl text-slate-300 text-center transition cursor-pointer text-xs flex items-center justify-center"
+              >
+                All Tournaments
+              </Link>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
