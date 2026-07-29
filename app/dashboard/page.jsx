@@ -10,10 +10,11 @@ export default function DashboardPage() {
   const [registeredTeams, setRegisteredTeams] = useState([]);
   const [successMsg, setSuccessMsg] = useState("");
 
-  // Selected Arena Modal State
+  // Modal State
   const [selectedArena, setSelectedArena] = useState(null);
+  const [showStream, setShowStream] = useState(false);
 
-  // Featured Live Arenas Data
+  // Featured Live Arenas Data with Embedded YouTube Stream IDs
   const liveArenas = [
     {
       id: "1",
@@ -26,7 +27,8 @@ export default function DashboardPage() {
       pass: "77812",
       map: "Erangel (Custom Match)",
       time: "11:00 AM IST",
-      streamUrl: "https://youtube.com",
+      // Official / Gaming Live Embed Stream ID
+      youtubeEmbedId: "jfKfPfyJRdk", 
       badgeColor: "bg-red-500/20 text-red-400 border-red-500/30",
     },
     {
@@ -40,7 +42,7 @@ export default function DashboardPage() {
       pass: "VALO2026",
       map: "Ascent (Best of 3)",
       time: "01:00 PM IST",
-      streamUrl: "https://twitch.tv",
+      youtubeEmbedId: "o9J_l_L2U0s",
       badgeColor: "bg-yellow-500/20 text-yellow-400 border-yellow-500/30",
     },
     {
@@ -54,7 +56,7 @@ export default function DashboardPage() {
       pass: "CSPRO99",
       map: "Mirage",
       time: "04:00 PM IST",
-      streamUrl: "https://youtube.com",
+      youtubeEmbedId: "N1S6B9U8c60",
       badgeColor: "bg-indigo-500/20 text-indigo-400 border-indigo-500/30",
     },
   ];
@@ -76,6 +78,11 @@ export default function DashboardPage() {
     setCaptainName("");
 
     setTimeout(() => setSuccessMsg(""), 4000);
+  };
+
+  const handleOpenArena = (arena) => {
+    setSelectedArena(arena);
+    setShowStream(false);
   };
 
   return (
@@ -143,9 +150,8 @@ export default function DashboardPage() {
                   </p>
                 </div>
 
-                {/* Clickable Enter Match Hub Button */}
                 <button
-                  onClick={() => setSelectedArena(arena)}
+                  onClick={() => handleOpenArena(arena)}
                   className="px-5 py-2.5 bg-indigo-600 hover:bg-indigo-500 text-white font-bold rounded-xl text-xs transition cursor-pointer shadow-md self-stretch sm:self-auto text-center active:scale-95"
                 >
                   Enter Match Hub 🎮
@@ -244,13 +250,16 @@ export default function DashboardPage() {
 
       </div>
 
-      {/* Match Hub Details Modal */}
+      {/* Interactive Match Hub & Live Stream Embedded Modal */}
       {selectedArena && (
         <div className="fixed inset-0 bg-black/85 backdrop-blur-sm flex items-center justify-center p-4 z-50">
-          <div className="bg-slate-900 border border-slate-800 p-6 rounded-2xl max-w-md w-full text-white shadow-2xl relative">
+          <div className="bg-slate-900 border border-slate-800 p-6 rounded-2xl max-w-lg w-full text-white shadow-2xl relative">
             <button
-              onClick={() => setSelectedArena(null)}
-              className="absolute top-4 right-4 text-gray-400 hover:text-white text-xl font-bold cursor-pointer"
+              onClick={() => {
+                setSelectedArena(null);
+                setShowStream(false);
+              }}
+              className="absolute top-4 right-4 text-gray-400 hover:text-white text-xl font-bold cursor-pointer z-10"
             >
               ✕
             </button>
@@ -265,42 +274,78 @@ export default function DashboardPage() {
             </div>
 
             <h2 className="text-2xl font-extrabold text-slate-100">{selectedArena.title}</h2>
-            <p className="text-xs text-slate-400 mt-1 mb-5">
-              Official Tournament Custom Room & Match Details
+            <p className="text-xs text-slate-400 mt-1 mb-4">
+              Official Tournament Custom Room & Embedded Live Match Broadcast
             </p>
 
-            <div className="bg-slate-950 p-4 rounded-xl border border-slate-800 space-y-3 text-xs mb-5">
-              <div className="flex justify-between items-center pb-2 border-b border-slate-800/80">
-                <span className="text-slate-400">Map / Format:</span>
-                <span className="font-bold text-slate-200">{selectedArena.map}</span>
+            {/* Embed Video Stream Container */}
+            {showStream ? (
+              <div className="mb-5 overflow-hidden rounded-xl border border-red-500/40 shadow-lg bg-black">
+                <div className="aspect-video w-full">
+                  <iframe
+                    className="w-full h-full"
+                    src={`https://www.youtube.com/embed/${selectedArena.youtubeEmbedId}?autoplay=1`}
+                    title="Live Tournament Stream"
+                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                    allowFullScreen
+                  ></iframe>
+                </div>
+                <div className="p-2.5 bg-slate-950 flex justify-between items-center text-[11px]">
+                  <span className="text-red-400 font-bold flex items-center gap-1.5">
+                    <span className="w-2 h-2 rounded-full bg-red-500 animate-ping"></span> Live Spectator Mode
+                  </span>
+                  <button
+                    onClick={() => setShowStream(false)}
+                    className="text-slate-400 hover:text-white underline cursor-pointer"
+                  >
+                    Back to Room Details
+                  </button>
+                </div>
               </div>
-              <div className="flex justify-between items-center pb-2 border-b border-slate-800/80">
-                <span className="text-slate-400">Schedule Time:</span>
-                <span className="font-bold text-indigo-400">{selectedArena.time}</span>
+            ) : (
+              /* Custom Room Details */
+              <div className="bg-slate-950 p-4 rounded-xl border border-slate-800 space-y-3 text-xs mb-5">
+                <div className="flex justify-between items-center pb-2 border-b border-slate-800/80">
+                  <span className="text-slate-400">Map / Format:</span>
+                  <span className="font-bold text-slate-200">{selectedArena.map}</span>
+                </div>
+                <div className="flex justify-between items-center pb-2 border-b border-slate-800/80">
+                  <span className="text-slate-400">Schedule Time:</span>
+                  <span className="font-bold text-indigo-400">{selectedArena.time}</span>
+                </div>
+                <div className="flex justify-between items-center pb-2 border-b border-slate-800/80">
+                  <span className="text-slate-400">Custom Room ID:</span>
+                  <span className="font-mono bg-slate-900 px-2 py-1 rounded text-yellow-400 font-bold tracking-wider">
+                    {selectedArena.roomId}
+                  </span>
+                </div>
+                <div className="flex justify-between items-center">
+                  <span className="text-slate-400">Room Password:</span>
+                  <span className="font-mono bg-slate-900 px-2 py-1 rounded text-emerald-400 font-bold tracking-wider">
+                    {selectedArena.pass}
+                  </span>
+                </div>
               </div>
-              <div className="flex justify-between items-center pb-2 border-b border-slate-800/80">
-                <span className="text-slate-400">Custom Room ID:</span>
-                <span className="font-mono bg-slate-900 px-2 py-1 rounded text-yellow-400 font-bold tracking-wider">
-                  {selectedArena.roomId}
-                </span>
-              </div>
-              <div className="flex justify-between items-center">
-                <span className="text-slate-400">Room Password:</span>
-                <span className="font-mono bg-slate-900 px-2 py-1 rounded text-emerald-400 font-bold tracking-wider">
-                  {selectedArena.pass}
-                </span>
-              </div>
-            </div>
+            )}
 
+            {/* Modal Actions */}
             <div className="flex gap-3">
-              <a
-                href={selectedArena.streamUrl}
-                target="_blank"
-                rel="noreferrer"
-                className="flex-1 py-2.5 bg-red-600 hover:bg-red-500 font-bold rounded-xl text-white text-center transition cursor-pointer text-xs flex items-center justify-center gap-2"
-              >
-                🔴 Watch Live Stream
-              </a>
+              {!showStream ? (
+                <button
+                  onClick={() => setShowStream(true)}
+                  className="flex-1 py-2.5 bg-red-600 hover:bg-red-500 font-bold rounded-xl text-white text-center transition cursor-pointer text-xs flex items-center justify-center gap-2 shadow-lg"
+                >
+                  🔴 Watch Live Stream Video
+                </button>
+              ) : (
+                <button
+                  onClick={() => setShowStream(false)}
+                  className="flex-1 py-2.5 bg-indigo-600 hover:bg-indigo-500 font-bold rounded-xl text-white text-center transition cursor-pointer text-xs"
+                >
+                  📋 View Room Info
+                </button>
+              )}
+
               <Link
                 href="/tournaments"
                 className="py-2.5 px-4 bg-slate-800 hover:bg-slate-700 font-medium rounded-xl text-slate-300 text-center transition cursor-pointer text-xs flex items-center justify-center"
