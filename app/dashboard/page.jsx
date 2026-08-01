@@ -203,34 +203,49 @@ export default function DashboardPage() {
           </div>
 
           <div className="space-y-4">
-            {liveArenas.map((arena) => (
-              <div
-                key={arena.id}
-                className="bg-slate-900/60 border border-slate-800 p-5 rounded-2xl backdrop-blur shadow-xl hover:border-slate-700 transition flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4"
-              >
-                <div>
-                  <div className="flex items-center gap-2 mb-1.5">
-                    <span className={`text-[11px] font-bold px-2.5 py-0.5 rounded border ${arena.badgeColor}`}>
-                      {arena.status}
-                    </span>
-                    <span className="text-xs bg-slate-800 text-slate-300 px-2 py-0.5 rounded font-medium">
-                      {arena.game}
-                    </span>
-                  </div>
-                  <h3 className="text-lg font-bold text-slate-100">{arena.title}</h3>
-                  <p className="text-xs text-slate-400 mt-1">
-                    Prize Pool: <strong className="text-emerald-400">{arena.prizePool}</strong> • Roster Cap: {arena.teamsCount}
-                  </p>
-                </div>
+          {liveArenas.map((arena) => (
+  <div
+    key={arena.id}
+    className="bg-slate-900/60 border border-slate-800 p-5 rounded-2xl backdrop-blur shadow-xl hover:border-slate-700 transition flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4"
+  >
+    <div className="flex items-center gap-4">
+      <img
+        src={
+          arena.game === "BGMI" ? "/games/bgmi.png" :
+          arena.game === "Valorant" ? "/games/valorant.png" :
+          arena.game === "CS2" ? "/games/cs2.png" :
+          "/games/bgmi.png"
+        }
+        alt={arena.game}
+        className="w-12 h-12 rounded-xl object-contain bg-white p-1.5 shrink-0"
+      />
 
-                <button
-                  onClick={() => handleOpenArena(arena)}
-                  className="px-5 py-2.5 bg-indigo-600 hover:bg-indigo-500 text-white font-bold rounded-xl text-xs transition cursor-pointer shadow-md self-stretch sm:self-auto text-center active:scale-95"
-                >
-                  Enter Match Hub 🎮
-                </button>
-              </div>
-            ))}
+      <div>
+        <div className="flex items-center gap-2 mb-1.5">
+          <span className={`text-[11px] font-bold px-2.5 py-0.5 rounded border ${arena.badgeColor}`}>
+            {arena.status}
+          </span>
+
+          <span className="flex items-center gap-1 text-xs bg-slate-800 text-slate-300 px-2 py-0.5 rounded font-medium">
+            {arena.game}
+          </span>
+        </div>
+
+        <h3 className="text-lg font-bold text-slate-100">{arena.title}</h3>
+        <p className="text-xs text-slate-400 mt-1">
+          Prize Pool: <strong className="text-emerald-400">{arena.prizePool}</strong> • Roster Cap: {arena.teamsCount}
+        </p>
+      </div>
+    </div>
+
+    <button
+      onClick={() => handleOpenArena(arena)}
+      className="px-5 py-2.5 bg-indigo-600 hover:bg-indigo-500 text-white font-bold rounded-xl text-xs transition cursor-pointer shadow-md self-stretch sm:self-auto text-center active:scale-95"
+    >
+      Enter Match Hub 🎮
+    </button>
+  </div>
+))}
           </div>
 
           {/* Feature 3: LFG / Team Finder Widget */}
