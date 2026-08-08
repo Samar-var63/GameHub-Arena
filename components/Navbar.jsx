@@ -15,7 +15,7 @@ export default function Navbar() {
     {/* ✅ Square Logo */}
     <div className="w-10 h-10 overflow-hidden rounded-lg shadow-[0_0_10px_#22c55e]">
       <Image
-        src="/logo.png"
+        src="/logo1.png"
         alt="GameHub Arena"
         width={40}
         height={40}
