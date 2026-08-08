@@ -25,14 +25,15 @@ JWT (jsonwebtoken) for authentication + bcryptjs for password hashing
 
  Project structure
 
-
-├── app/            Pages and routes (App Router)
-├── components/     Reusable UI components
-├── lib/            Helper functions, DB connection, utilities
-├── models/         Mongoose schemas (Users, Teams, Tournaments, etc.)
-├── styles/         Global styles
-├── public/         Static assets (images, icons)
-└── middleware.ts   Route protection / auth middleware
+```
+├── app/            # Pages and routes (App Router)
+├── components/     # Reusable UI components
+├── lib/            # Helper functions, DB connection, utilities
+├── models/         # Mongoose schemas (Users, Teams, Tournaments, etc.)
+├── styles/         # Global styles
+├── public/         # Static assets (images, icons)
+└── middleware.ts   # Route protection / auth middleware
+```
 
 
  Getting started
