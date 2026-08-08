@@ -2,12 +2,11 @@
 @tailwind components;
 @tailwind utilities;
 
-/* Fix for default browser white background & unwanted horizontal scroll */
 html,
 body {
-  margin: 0 !important;
-  padding: 0 !important;
-  background-color: #030712 !important; /* Dark background matching your theme */
+  margin: 0;
+  padding: 0;
+  background-color: #030712;
   color: #ffffff;
   min-height: 100vh;
   width: 100%;
