@@ -1,35 +1,27 @@
 import React from "react";
 import Link from "next/link";
 import Image from "next/image";
-import { theme } from "@/styles/theme";
 
 export default function Navbar() {
   return (
     <nav className="bg-slate-900 border-b border-slate-800 p-4">
       <div className="max-w-7xl mx-auto flex items-center justify-between">
 
-        {/* 🔥 LOGO (replaces text) */}
-     <Link href="/">
-  <div className="flex items-center gap-3 cursor-pointer">
+        {/* 🔥 LOGO */}
+        <Link href="/">
+          <div className="flex items-center cursor-pointer">
+            <div className="relative h-12 w-44">
+              <Image
+                src="/logo1.png"
+                alt="GameHub Arena"
+                fill
+                priority
+                className="object-contain"
+              />
+            </div>
+          </div>
+        </Link>
 
-    {/* ✅ Square Logo */}
-    <div className="w-10 h-10 overflow-hidden rounded-lg shadow-[0_0_10px_#22c55e]">
-      <Image
-        src="/logo1.png"
-        alt="GameHub Arena"
-        width={40}
-        height={40}
-        className="w-full h-full object-cover"
-      />
-    </div>
-
-    {/* ✅ Text */}
-    <div className="text-xl font-bold text-indigo-500 tracking-wider">
-      GAMEHUB ARENA
-    </div>
-
-  </div>
-</Link>
         {/* Navigation Links */}
         <div className="hidden md:flex space-x-6">
           <Link href="/dashboard" className="text-slate-300 hover:text-white transition">
