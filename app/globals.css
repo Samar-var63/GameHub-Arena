@@ -1,9 +1,1 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
-
-/* Set global body background to Light Green/Emerald */
-body {
-  background-color: #ecfdf5 !important; /* light emerald tint */
-  color: #022c22 !important;            /* dark text */
-}
+@import "tailwindcss";
