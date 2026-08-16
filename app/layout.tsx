@@ -1,18 +1,21 @@
 import "./globals.css";
+import React, { ReactNode } from "react";
+import VideoBackground from "@/components/VideoBackground";
 import Navbar from "@/components/Navbar";
 import Providers from "@/components/Providers";
 
 export default function RootLayout({
   children,
 }: {
-  children: React.ReactNode;
+  children: ReactNode;
 }) {
   return (
-    <html lang="en" className="bg-[#030712] text-white">
-      <body className="bg-[#030712] text-white min-h-screen w-full antialiased">
+    <html lang="en" className="text-white">
+      <body className="relative bg-transparent min-h-screen w-full antialiased text-white">
         <Providers>
+          <VideoBackground />
           <Navbar />
-          {children}
+          <div className="relative z-10">{children}</div>
         </Providers>
       </body>
     </html>

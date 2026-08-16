@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import Image from "next/image";
 import { useSession, signOut } from "next-auth/react";
 
 export default function Navbar() {
@@ -14,10 +15,20 @@ export default function Navbar() {
   ];
 
   return (
-    <nav className="flex items-center justify-between px-8 py-4 bg-[#030712] border-b border-slate-800 text-white">
-      {/* Brand Logo */}
-      <Link href="/" className="text-xl font-bold tracking-wider text-indigo-400">
-        GAMEHUB ARENA
+    <nav className="flex items-center justify-between px-8 py-4 bg-slate-900/80 backdrop-blur-md border-b border-slate-800 text-white relative z-50">
+      {/* Logo */}
+      <Link href="/">
+        <div className="flex items-center cursor-pointer">
+          <div className="relative h-12 w-44">
+            <Image
+              src="/logo1.png"
+              alt="GameHub Arena"
+              fill
+              priority
+              className="object-contain"
+            />
+          </div>
+        </div>
       </Link>
 
       {/* Navigation Links */}
@@ -32,7 +43,7 @@ export default function Navbar() {
           </Link>
         ))}
 
-        {/* SHOW PROFILE LINK ONLY WHEN LOGGED IN */}
+        {/* Profile Link (When Logged In) */}
         {session && (
           <Link
             href="/profile"
@@ -43,12 +54,11 @@ export default function Navbar() {
         )}
       </div>
 
-      {/* Right Side Auth Buttons */}
+      {/* Auth State & Action Buttons */}
       <div className="flex items-center gap-4">
         {status === "loading" ? (
           <span className="text-sm text-slate-400">Loading...</span>
         ) : session ? (
-          /* SHOW USER AVATAR & SIGN OUT WHEN LOGGED IN */
           <div className="flex items-center gap-4">
             <Link
               href="/profile"
@@ -76,7 +86,6 @@ export default function Navbar() {
             </button>
           </div>
         ) : (
-          /* SHOW LOGIN BUTTON WHEN LOGGED OUT */
           <Link
             href="/login"
             className="text-sm bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-1.5 rounded-md font-medium transition"

@@ -2,8 +2,8 @@ import Link from "next/link";
 
 export default function Home() {
   return (
-    <main className="min-h-screen bg-slate-950 text-white flex flex-col items-center justify-center p-8 text-center">
-      <h1 className="text-5xl font-extrabold text-indigo-500 mb-4 tracking-tight">
+   <main className="min-h-screen text-white flex flex-col items-center justify-center p-8 text-center">
+  <h1 className="text-5xl font-extrabold text-indigo-500 mb-4 tracking-tight">
         GAMEHUB ARENA
       </h1>
       <p className="text-slate-400 max-w-md mb-8 text-lg">

@@ -5,8 +5,18 @@ html,
 body {
   margin: 0;
   padding: 0;
-  background-color: #060b17 !important;
   color: #ffffff;
   min-height: 100vh;
   width: 100%;
+}
+
+/* Force glass transparency across all background panels */
+div[class*="bg-slate-9"],
+div[class*="bg-slate-8"],
+div[class*="bg-zinc-9"],
+div[class*="bg-[#"] {
+  background-color: rgba(15, 23, 42, 0.55) !important;
+  backdrop-filter: blur(10px) !important;
+  -webkit-backdrop-filter: blur(10px) !important;
+  border: 1px solid rgba(255, 255, 255, 0.1) !important;
 }
