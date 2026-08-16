@@ -1,8 +1,6 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+@import "tailwindcss";
 
-/* Isse poori screen ka background dark ho jayega aur white gaps gayab ho jayenge */
+/* Baaki ka body CSS aage waisa hi rehne do */
 html,
 body {
   margin: 0;
