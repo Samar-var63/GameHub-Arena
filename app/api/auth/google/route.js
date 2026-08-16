@@ -4,12 +4,20 @@ import { getAuth } from "firebase-admin/auth";
 import jwt from "jsonwebtoken";
 import connectDB from "@/lib/db";
 import User from "@/models/User";
-import serviceAccount from "@/firebase-service-account.json";
 
+// Initialize Firebase Admin using Environment Variable
 if (getApps().length === 0) {
-  initializeApp({
-    credential: cert(serviceAccount),
-  });
+  try {
+    const serviceAccount = process.env.FIREBASE_SERVICE_ACCOUNT
+      ? JSON.parse(process.env.FIREBASE_SERVICE_ACCOUNT)
+      : {};
+
+    initializeApp({
+      credential: cert(serviceAccount),
+    });
+  } catch (error) {
+    console.error("Firebase Admin initialization error:", error);
+  }
 }
 
 export async function POST(request) {
