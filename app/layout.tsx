@@ -1,21 +1,16 @@
-import "@/app/globals.css"; 
+import "./globals.css";
 import Navbar from "@/components/Navbar";
 
-export const metadata = {
-  title: "GameHub Arena",
-  description: "Dynamic Tournament Bracket Tracker",
-};
-
-interface RootLayoutProps {
+export default function RootLayout({
+  children,
+}: {
   children: React.ReactNode;
-}
-
-export default function RootLayout({ children }: RootLayoutProps) {
+}) {
   return (
-    <html lang="en">
-      <body>
+    <html lang="en" className="bg-[#030712] text-white">
+      <body className="bg-[#030712] text-white min-h-screen w-full antialiased">
         <Navbar />
-        <main>{children}</main>
+        {children}
       </body>
     </html>
   );
