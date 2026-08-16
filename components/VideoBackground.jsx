@@ -21,7 +21,7 @@ export default function VideoBackground() {
         zIndex: -10,
         overflow: "hidden",
         pointerEvents: "none",
-        backgroundColor: "#050b17", // Dark base background to eliminate white glare
+        backgroundColor: "#050b17",
       }}
     >
       <video
@@ -34,20 +34,20 @@ export default function VideoBackground() {
           width: "100%",
           height: "100%",
           objectFit: "cover",
-          opacity: 0.45, // Lowers video intensity
-          filter: "brightness(0.6) contrast(1.1)", // Reduces overall glare
+          opacity: 0.75, // Boosted opacity from 0.45 to 0.75
+          filter: "brightness(1.05) contrast(1.2)", // Increased brightness & punchy contrast
         }}
       >
         <source src="/videos/background1.mp4" type="video/mp4" />
       </video>
 
-      {/* Dark tint overlay for sharp UI text visibility */}
+      {/* Lightened overlay for maximum visibility */}
       <div
         style={{
           position: "absolute",
           inset: 0,
-          backgroundColor: "rgba(5, 11, 23, 0.65)",
-          backdropFilter: "blur(2px)", // Soft blur to make text pop
+          backgroundColor: "rgba(5, 11, 23, 0.3)", // Lightened dark tint from 0.65 to 0.30
+          backdropFilter: "blur(1px)",
         }}
       />
     </div>
