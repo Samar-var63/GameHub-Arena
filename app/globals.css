@@ -1,14 +1,12 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+@import "tailwindcss";
 
+/* Baaki ka body CSS aage waisa hi rehne do */
 html,
 body {
   margin: 0;
   padding: 0;
-  background-color: #030712;
+  background-color: #060b17 !important;
   color: #ffffff;
   min-height: 100vh;
   width: 100%;
-  overflow-x: hidden;
 }
