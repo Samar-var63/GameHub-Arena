@@ -4,11 +4,16 @@ import VideoBackground from "@/components/VideoBackground";
 import Navbar from "@/components/Navbar";
 import Providers from "@/components/Providers";
 
-export default function RootLayout({
-  children,
-}: {
-  children: ReactNode;
-}) {
+export const metadata = {
+  title: "GameHub Arena",
+  description: "Dynamic Tournament Bracket Tracker",
+};
+
+interface RootLayoutProps {
+  children: React.ReactNode;
+}
+
+export default function RootLayout({ children }: RootLayoutProps) {
   return (
     <html lang="en" className="text-white">
       <body className="relative bg-transparent min-h-screen w-full antialiased text-white">
