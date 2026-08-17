@@ -12,6 +12,7 @@ export default function Navbar() {
     { name: "Tournaments", href: "/tournaments" },
     { name: "Teams", href: "/teams" },
     { name: "Leaderboard", href: "/leaderboard" },
+    { name: "About Us", href: "/about" },
   ];
 
   return (
