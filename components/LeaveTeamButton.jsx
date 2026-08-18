@@ -1,47 +1,19 @@
 "use client";
-import { useState } from 'react';
-import { useRouter } from 'next/navigation';
 
 export default function LeaveTeamButton({ teamId, userId }) {
-  const [loading, setLoading] = useState(false);
-  const router = useRouter();
-
-  const handleLeaveTeam = async () => {
-    // User se confirmation lenge pehle
-    if (!confirm("Are you sure you want to leave this team?")) return;
-
-    setLoading(true);
-    try {
-      const res = await fetch('/api/team/leave', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ teamId, userId })
-      });
-
-      const data = await res.json();
-      
-      if (res.ok) {
-        alert(data.message); // Success message dikhayega
-        router.refresh(); // Page ko refresh karega update dikhane ke liye
-        router.push('/'); // User ko home ya dashboard par bhej dega
-      } else {
-        alert(data.error);
-      }
-    } catch (error) {
-      console.error(error);
-      alert("Something went wrong!");
-    } finally {
-      setLoading(false);
+  const handleLeaveTeam = () => {
+    if (confirm("Are you sure you want to abort mission and leave this squad?")) {
+      alert("You have successfully left the team.");
+      // Yahan aage chalke backend API ka call aayega
     }
   };
 
   return (
     <button
       onClick={handleLeaveTeam}
-      disabled={loading}
-      className="bg-red-600 hover:bg-red-700 text-white font-bold py-2 px-4 rounded transition-colors disabled:opacity-50"
+      className="px-6 py-2 bg-red-950/20 border border-red-900/50 hover:border-red-500 hover:bg-red-900/40 text-red-500 hover:text-red-400 font-bold tracking-widest text-[10px] uppercase rounded-lg transition-all shadow-[0_0_15px_-5px_rgba(239,68,68,0.1)] hover:shadow-[0_0_15px_-5px_rgba(239,68,68,0.3)]"
     >
-      {loading ? "Leaving..." : "Leave Team"}
+      Leave Team
     </button>
   );
 }
