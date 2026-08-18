@@ -1,6 +1,8 @@
 "use client";
 
 import { useState } from "react";
+// 1. Yahan humne apna naya component import kar liya hai
+import LeaveTeamButton from '@/components/LeaveTeamButton'; 
 
 export default function TeamsPage() {
   const [selectedTeam, setSelectedTeam] = useState(null);
@@ -245,12 +247,18 @@ export default function TeamsPage() {
               </ul>
             </div>
 
-            <button
-              onClick={() => setSelectedTeam(null)}
-              className="w-full mt-6 py-2.5 bg-slate-800 hover:bg-slate-700 font-medium rounded-xl text-slate-300 transition cursor-pointer text-sm"
-            >
-              Close
-            </button>
+            {/* 2. YAHAN HUMNE LEAVE TEAM BUTTON ADD KIYA HAI */}
+            <div className="mt-6 flex flex-col gap-2">
+              <div className="w-full">
+                <LeaveTeamButton teamId={selectedTeam.id} userId="dummy_user_id_for_now" />
+              </div>
+              <button
+                onClick={() => setSelectedTeam(null)}
+                className="w-full py-2.5 bg-slate-800 hover:bg-slate-700 font-medium rounded-xl text-slate-300 transition cursor-pointer text-sm"
+              >
+                Close
+              </button>
+            </div>
           </div>
         </div>
       )}
